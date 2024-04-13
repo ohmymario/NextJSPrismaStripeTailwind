@@ -5,4 +5,6 @@ const config = {
   },
 };
 
-export default config;
+module.exports = config;
+
+/** https://github.com/vercel/next.js/issues/64371#issuecomment-2050735468  */
