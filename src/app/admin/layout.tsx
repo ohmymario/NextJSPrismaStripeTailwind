@@ -1,5 +1,8 @@
 import { Nav, NavLink } from '@/components/Nav';
 
+// No Cached Data, Keep Data Fresh
+export const dynamic = 'force-dynamic';
+
 const AdminLayout = ({
   children,
 }: Readonly<{
