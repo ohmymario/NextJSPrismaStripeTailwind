@@ -42,6 +42,26 @@ async function getCustomerData() {
   };
 }
 
+async function getProductData() {
+  const [activeProducts, inactiveProducts] = await Promise.all([
+    db.product.count({
+      where: {
+        isAvailableForPurchase: true,
+      },
+    }),
+    db.product.count({
+      where: {
+        isAvailableForPurchase: false,
+      },
+    }),
+  ]);
+
+  return {
+    activeProducts,
+    inactiveProducts,
+  };
+}
+
 const DashboardCard = (props: DashboardCardProps) => {
   const { title, subtitle, body } = props;
 
@@ -60,7 +80,11 @@ const DashboardCard = (props: DashboardCardProps) => {
 
 const AdminDashboard = async (props: AdminDashboardProps) => {
   // Fetch Data
-  const [salesData, customerData] = await Promise.all([getSalesData(), getCustomerData()]);
+  const [salesData, customerData, productData] = await Promise.all([
+    getSalesData(),
+    getCustomerData(),
+    getProductData(),
+  ]);
 
   // Data
   const { amount, numberOfSales } = salesData;
@@ -71,14 +95,22 @@ const AdminDashboard = async (props: AdminDashboardProps) => {
   const formattedNumberOfSales = formatNumber(numberOfSales);
   const formattedAverageValuePerUser = formatCurrency(averageValuePerUser);
   const formattedUserCount = formatNumber(userCount);
+  const formattedActiveProductCount = formatNumber(productData.activeProducts);
+  const formattedInactiveProductCount = formatNumber(productData.inactiveProducts);
 
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
       <DashboardCard title='Sales' subtitle={`${formattedNumberOfSales} Orders`} body={formattedAmount} />
+
       <DashboardCard
         title='Customers'
         subtitle={`${formattedAverageValuePerUser} Average Value`}
         body={formattedUserCount}
+      />
+      <DashboardCard
+        title='Active Products'
+        subtitle={`${formattedInactiveProductCount} inactive`}
+        body={formattedActiveProductCount}
       />
     </div>
   );
