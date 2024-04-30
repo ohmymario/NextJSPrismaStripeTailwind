@@ -27,7 +27,7 @@ const addSchema = z.object({
   image: imageSchema.refine(file => file.size > 0, "Required"),
 });
 
-export async function addProduct(formData: FormData) {
+export async function addProduct(prevState: unknown, formData: FormData) {
   const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
   if (result.success === false) {
     console.log(result.error)
@@ -48,6 +48,7 @@ export async function addProduct(formData: FormData) {
 
   await db.product.create({
     data: {
+      isAvailableForPurchase: false,
       name: data.name,
       description: data.description,
       priceInCents: data.priceInCents,
