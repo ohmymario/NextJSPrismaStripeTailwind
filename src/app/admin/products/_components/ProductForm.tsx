@@ -60,7 +60,16 @@ export default function ProductForm(props: ProductFormProps) {
         {error.image && <div className='text-destructive'>{error.image}</div>}
       </div>
 
-      <Button type='submit'>Save</Button>
+      <SubmitButton />
     </form>
   );
 }
+
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
+  return (
+    <Button type='submit' disabled={pending}>
+      {pending ? 'Saving...' : 'Save'}
+    </Button>
+  );
+};
