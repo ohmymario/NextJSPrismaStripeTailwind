@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { Table, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import db from '@/db/db';
+import { formatCurrency, formatNumber } from '@/lib/formatters';
 import Link from 'next/link';
 import PageHeader from '../_components/PageHeader';
 
@@ -19,7 +20,26 @@ export default function Products(props: ProductsProps) {
   );
 }
 
-function ProductsTable() {
+async function ProductsTable() {
+  const products = await db.product.findMany({
+    select: {
+      id: true,
+      name: true,
+      priceInCents: true,
+      isAvailableForPurchase: true,
+      _count: {
+        select: { orders: true },
+      },
+    },
+    orderBy: { name: 'asc' },
+  });
+
+  if (products.length === 0) {
+    return <p>No products found</p>;
+  }
+
+  console.log(products);
+
   return (
     <Table>
       <TableHeader>
