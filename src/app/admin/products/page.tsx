@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import db from '@/db/db';
 import { formatCurrency, formatNumber } from '@/lib/formatters';
+import { CheckCircle2, MoreVertical, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import PageHeader from '../_components/PageHeader';
 
@@ -55,6 +57,21 @@ async function ProductsTable() {
           </TableHead>
         </TableRow>
       </TableHeader>
+
+      <TableBody>
+        {products.map((product) => (
+          <TableRow key={product.id}>
+            <TableCell className='w-0'>{product.isAvailableForPurchase ? <CheckCircle2 /> : <XCircle />}</TableCell>
+            <TableCell>{product.name}</TableCell>
+            <TableCell>{formatCurrency(product.priceInCents / 100)}</TableCell>
+            <TableCell>{formatNumber(product._count.orders)}</TableCell>
+            <TableCell>
+              <MoreVertical />
+              <span className='sr-only'>Actions</span>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
     </Table>
   );
 }
