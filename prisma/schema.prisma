@@ -20,7 +20,7 @@ model Product {
   isAvailableForPurchase Boolean                 @default(true)
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
-  Order                  Order[]
+  orders                 Order[]
   DownloadVerifications  DownloadVerifications[]
 }
 
@@ -29,7 +29,7 @@ model User {
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Order     Order[]
+  orders    Order[]
 }
 
 model Order {
