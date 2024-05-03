@@ -2,7 +2,7 @@
 
 import db from '@/db/db';
 import fs from 'fs/promises';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 
 // Define a schema for the file to ensure it's an instance of File and refine for size
@@ -67,4 +67,14 @@ export async function toggleProductAvailability(id: string, isAvailableForPurcha
     // toggled boolean value
     data: { isAvailableForPurchase },
   });
+}
+
+export async function deleteProduct(id: string) {
+  const product = await db.product.delete({
+    where: { id },
+  });
+
+
+  if (product === null) return notFound();
+
 }
