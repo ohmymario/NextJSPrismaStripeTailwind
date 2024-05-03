@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ActiveToggleDropdownItem, DeleteDropdownItem } from './_components/ProductActions';
 
 interface ProductsProps {}
 
@@ -92,6 +93,9 @@ async function ProductsTable() {
                   <DropdownMenuItem asChild>
                     <a href={`/admin/products/${product.id}/download`}>Activate</a>
                   </DropdownMenuItem>
+
+                  <ActiveToggleDropdownItem id={product.id} isAvailableForPurchase={product.isAvailableForPurchase} />
+                  <DeleteDropdownItem id={product.id} disabled={product._count.orders > 0} />
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
