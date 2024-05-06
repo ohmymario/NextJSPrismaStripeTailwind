@@ -51,7 +51,7 @@ export function DeleteDropdownItem(props: DeleteDropdownItemProps) {
   };
 
   return (
-    <DropdownMenuItem onClick={handleTransition} disabled={disabled || isPending}>
+    <DropdownMenuItem variant='destructive' onClick={handleTransition} disabled={disabled || isPending}>
       Delete
     </DropdownMenuItem>
   );
