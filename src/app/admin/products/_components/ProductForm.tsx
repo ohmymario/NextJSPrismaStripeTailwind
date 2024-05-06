@@ -1,12 +1,19 @@
 'use client';
 
+// react
+import { useState } from 'react';
+import { useFormState, useFormStatus } from 'react-dom';
+
+// shadcn
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+
+// utils
 import { formatCurrency } from '@/lib/formatters';
-import { useState } from 'react';
+
+// actions
 import { addProduct } from '../_actions/products';
-import { useFormState, useFormStatus } from 'react-dom';
 
 interface ProductFormProps {}
 
@@ -55,7 +62,7 @@ export default function ProductForm(props: ProductFormProps) {
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='image'>Imag</Label>
+        <Label htmlFor='image'>Image</Label>
         <Input type='file' id='image' name='image' required />
         {error.image && <div className='text-destructive'>{error.image}</div>}
       </div>

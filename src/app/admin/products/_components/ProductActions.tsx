@@ -1,7 +1,12 @@
 'use client';
 
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+// react
 import { useTransition } from 'react';
+
+// shadcn
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+
+// actions
 import { deleteProduct, toggleProductAvailability } from '../_actions/products';
 
 interface ActiveToggleDropdownItemProps {
@@ -14,6 +19,7 @@ interface DeleteDropdownItemProps {
   disabled: boolean;
 }
 
+// Toggle Product Availability
 export function ActiveToggleDropdownItem(props: ActiveToggleDropdownItemProps) {
   const { id, isAvailableForPurchase } = props;
 
@@ -32,6 +38,7 @@ export function ActiveToggleDropdownItem(props: ActiveToggleDropdownItemProps) {
   );
 }
 
+// Delete Single Product
 export function DeleteDropdownItem(props: DeleteDropdownItemProps) {
   const { id, disabled } = props;
 
