@@ -1,3 +1,23 @@
+// Utils
+import { formatCurrency, formatNumber } from '@/lib/formatters';
+
+// Icons
+import { CheckCircle2, MoreVertical, XCircle } from 'lucide-react';
+
+// Next
+import Link from 'next/link';
+
+// Components
+import PageHeader from '../_components/PageHeader';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+// Actions
+import { ActiveToggleDropdownItem, DeleteDropdownItem } from './_components/ProductActions';
+
+// Prisma db
+import db from '@/db/db';
+
+// Shadcn
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -6,13 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import db from '@/db/db';
-import { formatCurrency, formatNumber } from '@/lib/formatters';
-import { CheckCircle2, MoreVertical, XCircle } from 'lucide-react';
-import Link from 'next/link';
-import PageHeader from '../_components/PageHeader';
-import { ActiveToggleDropdownItem, DeleteDropdownItem } from './_components/ProductActions';
 
 interface ProductsProps {}
 
