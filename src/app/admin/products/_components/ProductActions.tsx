@@ -8,6 +8,7 @@ import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 
 // actions
 import { deleteProduct, toggleProductAvailability } from '../_actions/products';
+import { useRouter } from 'next/navigation';
 
 interface ActiveToggleDropdownItemProps {
   id: string;
@@ -24,10 +25,12 @@ export function ActiveToggleDropdownItem(props: ActiveToggleDropdownItemProps) {
   const { id, isAvailableForPurchase } = props;
 
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleTransition = () => {
     startTransition(async () => {
       await toggleProductAvailability(id, !isAvailableForPurchase);
+      router.refresh();
     });
   };
 
@@ -43,10 +46,12 @@ export function DeleteDropdownItem(props: DeleteDropdownItemProps) {
   const { id, disabled } = props;
 
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleTransition = () => {
     startTransition(async () => {
       await deleteProduct(id);
+      router.refresh();
     });
   };
 
