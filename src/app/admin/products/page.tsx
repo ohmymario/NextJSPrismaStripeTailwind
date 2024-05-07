@@ -80,7 +80,19 @@ async function ProductsTable() {
       <TableBody>
         {products.map((product) => (
           <TableRow key={product.id}>
-            <TableCell className='w-0'>{product.isAvailableForPurchase ? <CheckCircle2 /> : <XCircle />}</TableCell>
+            <TableCell className='w-0'>
+              {product.isAvailableForPurchase ? (
+                <>
+                  <span className='sr-only'>Available</span>
+                  <CheckCircle2 />
+                </>
+              ) : (
+                <>
+                  <span className='sr-only'>Unavailable</span>
+                  <XCircle className='stroke-destructive' />
+                </>
+              )}
+            </TableCell>
             <TableCell>{product.name}</TableCell>
             <TableCell>{formatCurrency(product.priceInCents / 100)}</TableCell>
             <TableCell>{formatNumber(product._count.orders)}</TableCell>
