@@ -61,8 +61,6 @@ async function ProductsTable() {
     return <p>No products found</p>;
   }
 
-  console.log(products);
-
   return (
     <Table>
       <TableHeader>
@@ -98,9 +96,6 @@ async function ProductsTable() {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <a href={`/admin/products/${product.id}/download`}>Edit (non functional)</a>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <a href={`/admin/products/${product.id}/download`}>Delete (non functional) </a>
                   </DropdownMenuItem>
 
                   <ActiveToggleDropdownItem id={product.id} isAvailableForPurchase={product.isAvailableForPurchase} />
