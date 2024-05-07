@@ -14,6 +14,7 @@ import { formatCurrency } from '@/lib/formatters';
 
 // actions
 import { addProduct } from '../_actions/products';
+import { Textarea } from '@/components/ui/textarea';
 
 interface ProductFormProps {}
 
@@ -50,8 +51,9 @@ export default function ProductForm(props: ProductFormProps) {
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='description'>description</Label>
-        <Input type='text' id='description' name='description' required />
+        <Label htmlFor='description'>Description</Label>
+
+        <Textarea id='description' name='description' required />
         {error.description && <div className='text-destructive'>{error.description}</div>}
       </div>
 
