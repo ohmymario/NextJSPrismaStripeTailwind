@@ -13,9 +13,8 @@ const fileSchema = z
 // Define a schema for the file to ensure it's an instance of File and refine for size
 const imageSchema = z
   .instanceof(File, { message: "Required" })
-  .refine(file => file.type.startsWith('image/'), { message: 'File must be an image', })
-  .refine(file => file.size <= 1024 * 1024 * 5, { message: 'File size must be less than 5MB', }
-  );
+  .refine(file => file.size === 0 || file.type.startsWith("image/"), { message: 'File must be an image', })
+  .refine(file => file.size <= 1024 * 1024 * 5, { message: 'File size must be less than 5MB', });
 
 
 // Define a schema for the form data
