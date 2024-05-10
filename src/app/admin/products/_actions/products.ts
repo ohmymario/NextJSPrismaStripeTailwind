@@ -1,6 +1,7 @@
 "use server"
 
 import db from '@/db/db';
+import { getItem } from '@/lib/getItem';
 import fs from 'fs/promises';
 import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -48,6 +49,56 @@ export async function addProduct(prevState: unknown, formData: FormData) {
   await db.product.create({
     data: {
       isAvailableForPurchase: false,
+      name: data.name,
+      description: data.description,
+      priceInCents: data.priceInCents,
+      filePath,
+      imagePath
+    },
+  });
+
+  redirect('/admin/products');
+}
+
+const editSchema = addSchema.extend({
+  file: fileSchema.optional(),
+  image: imageSchema.optional(),
+});
+
+export async function updateProduct(id: string, prevState: unknown, formData: FormData) {
+  const result = editSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (result.success === false) {
+    console.log(result.error)
+    return result.error.formErrors.fieldErrors;
+  }
+
+  const data = result.data;
+  const product = await getItem(id);
+
+  if (product === null) return notFound();
+
+  let filePath = product.filePath;
+  let imagePath = product.imagePath;
+
+  // Updated File Check
+  if (data.file != null && data.file.size > 0) {
+    await fs.unlink(product.filePath);
+    filePath = `products/${crypto.randomUUID()}-${data.file.name}`;
+    const fileBuffer = await data.file.arrayBuffer();
+    await fs.writeFile(filePath, Buffer.from(fileBuffer));
+  }
+
+  // Updated Image Check
+  if (data.image != null && data.image.size > 0) {
+    await fs.unlink(`public${product.imagePath}`);
+    imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`;
+    const imageBuffer = await data.image.arrayBuffer();
+    await fs.writeFile(`public${imagePath}`, Buffer.from(imageBuffer));
+  }
+
+  await db.product.update({
+    where: { id },
+    data: {
       name: data.name,
       description: data.description,
       priceInCents: data.priceInCents,
