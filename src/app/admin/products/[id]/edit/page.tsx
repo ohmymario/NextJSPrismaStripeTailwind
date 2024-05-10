@@ -1,24 +1,23 @@
-import { useParams } from 'next/navigation';
+// utils
+import { getItem } from '@/lib/getItem';
+
+// components
 import PageHeader from '../../../_components/PageHeader';
 import ProductForm from '../../_components/ProductForm';
-import db from '@/db/db';
 
-interface EditProductPageProps {}
+interface EditProductPageProps {
+  params: {
+    id: string;
+  };
+}
 
-export default async function EditProductPage() {
-  const { id } = useParams<{ id: string }>();
-
-  const product = await db.product.findUnique({
-    where: {
-      id,
-    },
-  });
+export default async function EditProductPage(props: EditProductPageProps) {
+  const { id } = props.params;
+  const product = await getItem(id);
 
   return (
     <>
       <PageHeader>Edit Product</PageHeader>
-
-      {/* will accept a product to edit */}
       <ProductForm product={product} />
     </>
   );
