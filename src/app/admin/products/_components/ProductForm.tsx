@@ -19,13 +19,13 @@ import { Product } from '@prisma/client';
 import Image from 'next/image';
 
 interface ProductFormProps {
-  product: Product | null;
+  product?: Product | null;
 }
 
 export default function ProductForm(props: ProductFormProps) {
   const { product } = props;
 
-  const [error, action] = useFormState(product === null ? addProduct : updateProduct.bind(null, product.id), {});
+  const [error, action] = useFormState(product == null ? addProduct : updateProduct.bind(null, product.id), {});
   const [priceInCents, setPriceInCents] = useState<number | undefined>(product?.priceInCents);
 
   return (
