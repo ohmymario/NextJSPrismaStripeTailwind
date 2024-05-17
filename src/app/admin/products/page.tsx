@@ -104,10 +104,10 @@ async function ProductsTable() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
-                    <a href={`/admin/products/${product.id}/download`}>Download (non functional)</a>
+                    <a href={`/admin/products/${product.id}/download`}>Download</a>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <a href={`/admin/products/${product.id}/edit`}>Edit (non functional)</a>
+                    <a href={`/admin/products/${product.id}/edit`}>Edit</a>
                   </DropdownMenuItem>
 
                   <ActiveToggleDropdownItem id={product.id} isAvailableForPurchase={product.isAvailableForPurchase} />
