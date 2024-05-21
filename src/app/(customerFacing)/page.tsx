@@ -3,6 +3,7 @@ import db from '@/db/db';
 import { Product } from '@prisma/client';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import Products from '../admin/products/page';
 
 // Products sorted by order count descending
 async function getMostPopularProducts() {
@@ -51,6 +52,7 @@ function ProductGridSection({ products, title }: { products: Product[]; title: s
           </Link>
         </Button>
       </div>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>{/* <ProductCard /> */}</div>
     </div>
   );
 }
