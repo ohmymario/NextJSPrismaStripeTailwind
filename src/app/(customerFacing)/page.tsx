@@ -4,10 +4,12 @@ import { Product } from '@prisma/client';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Products from '../admin/products/page';
+import { ProductCard } from '@/components/ProductCard';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 
 // Products sorted by order count descending
-async function getMostPopularProducts() {
-  const products = await db.product.findMany({
+function getMostPopularProducts() {
+  const products = db.product.findMany({
     where: { isAvailableForPurchase: true },
     orderBy: { orders: { _count: 'desc' } },
     take: 6,
@@ -17,8 +19,8 @@ async function getMostPopularProducts() {
 }
 
 // Products sorted by newest
-async function getNewestProducts() {
-  const products = await db.product.findMany({
+function getNewestProducts() {
+  const products = db.product.findMany({
     where: { isAvailableForPurchase: true },
     orderBy: { createdAt: 'desc' },
     take: 6,
@@ -28,19 +30,21 @@ async function getNewestProducts() {
 }
 
 export default async function HomePage() {
-  const PopularProducts = await getMostPopularProducts();
-  const NewestProducts = await getNewestProducts();
-
   return (
     <main className='space-y-12'>
       <h1>Products</h1>
-      <ProductGridSection products={PopularProducts} title='Most Popular' />
-      <ProductGridSection products={NewestProducts} title='Newest' />
+      <ProductGridSection productsFetcher={getMostPopularProducts} title='Most Popular' />
+      <ProductGridSection productsFetcher={getNewestProducts} title='Newest' />
     </main>
   );
 }
 
-function ProductGridSection({ products, title }: { products: Product[]; title: string }) {
+interface ProductGridSectionProps {
+  productsFetcher: () => Promise<Product[]>;
+  title: string;
+}
+
+async function ProductGridSection({ productsFetcher, title }: ProductGridSectionProps) {
   return (
     <div className='space-y-4'>
       <div className='flex gap-4'>
@@ -52,9 +56,11 @@ function ProductGridSection({ products, title }: { products: Product[]; title: s
           </Link>
         </Button>
       </div>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>{/* <ProductCard /> */}</div>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
+        {(await productsFetcher()).map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
     </div>
   );
 }
-
-// <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'></div>;
