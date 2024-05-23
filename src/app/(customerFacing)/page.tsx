@@ -1,40 +1,35 @@
+import { ProductCard, ProductCardSkeleton } from '@/components/ProductCard';
 import { Button } from '@/components/ui/button';
 import db from '@/db/db';
 import { Product } from '@prisma/client';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import Products from '../admin/products/page';
-import { ProductCard } from '@/components/ProductCard';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Suspense, use } from 'react';
 
 // Products sorted by order count descending
-function getMostPopularProducts() {
-  const products = db.product.findMany({
+async function getMostPopularProducts() {
+  return db.product.findMany({
     where: { isAvailableForPurchase: true },
     orderBy: { orders: { _count: 'desc' } },
     take: 6,
   });
-
-  return products;
 }
 
 // Products sorted by newest
-function getNewestProducts() {
-  const products = db.product.findMany({
+async function getNewestProducts() {
+  return db.product.findMany({
     where: { isAvailableForPurchase: true },
     orderBy: { createdAt: 'desc' },
     take: 6,
   });
-
-  return products;
 }
 
 export default async function HomePage() {
   return (
     <main className='space-y-12'>
       <h1>Products</h1>
-      <ProductGridSection productsFetcher={getMostPopularProducts} title='Most Popular' />
-      <ProductGridSection productsFetcher={getNewestProducts} title='Newest' />
+      <ProductGridSection title='Most Popular' productsFetcher={getMostPopularProducts} />
+      <ProductGridSection title='Newest' productsFetcher={getNewestProducts} />
     </main>
   );
 }
@@ -44,7 +39,7 @@ interface ProductGridSectionProps {
   title: string;
 }
 
-async function ProductGridSection({ productsFetcher, title }: ProductGridSectionProps) {
+function ProductGridSection({ productsFetcher, title }: ProductGridSectionProps) {
   return (
     <div className='space-y-4'>
       <div className='flex gap-4'>
@@ -57,10 +52,31 @@ async function ProductGridSection({ productsFetcher, title }: ProductGridSection
         </Button>
       </div>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
-        {(await productsFetcher()).map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        <Suspense fallback={<ProductGridSkeleton />}>
+          <ProductList productsFetcher={productsFetcher} />
+        </Suspense>
       </div>
     </div>
+  );
+}
+
+function ProductGridSkeleton() {
+  return (
+    <>
+      <ProductCardSkeleton />
+      <ProductCardSkeleton />
+    </>
+  );
+}
+
+function ProductList({ productsFetcher }: { productsFetcher: () => Promise<Product[]> }) {
+  const products = use(productsFetcher());
+
+  return (
+    <>
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </>
   );
 }
