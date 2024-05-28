@@ -38,3 +38,6 @@ next-env.d.ts
 /products
 /public/products
 .env
+
+# product structure
+project-structure.txt
