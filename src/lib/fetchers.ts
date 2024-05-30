@@ -2,7 +2,7 @@ import db from '@/db/db';
 import { cache as reactCache } from 'react';
 import { unstable_cache as nextCache } from 'next/cache';
 
-type Callback = (...args: any[]) => Promise<any[]>;
+type Callback = (...args: any[]) => Promise<any>;
 export function cache<T extends Callback>(
   cb: T,
   keyParts: string[],
@@ -44,7 +44,7 @@ export const fetchAllProducts = cache(
       where: { isAvailableForPurchase: true },
     })
   },
-  ["/", "fetchAllProducts"],
+  ["/products", "fetchAllProducts"],
   { revalidate: 60 * 60 * 24 });
 
 export const getItem = reactCache((id: string) => {
@@ -54,3 +54,14 @@ export const getItem = reactCache((id: string) => {
     },
   });
 })
+
+export const getSingleProduct = cache(
+  (id: string) => {
+    return db.product.findUnique({
+      where: {
+        id,
+      },
+    });
+  },
+  ["/products", "getSingleProduct"],
+  { revalidate: 60 * 60 * 24 });
