@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import Image from 'next/image';
+import { Skeleton } from './ui/skeleton';
 
 export function ProductCard({ product }: { product: Product }) {
   const { name, description, priceInCents, id, imagePath } = product;
@@ -42,23 +43,37 @@ export function ProductCard({ product }: { product: Product }) {
 export function ProductCardSkeleton() {
   return (
     <Card className='overflow-hidden flex flex-col animate-pulse'>
-      <div className='w-full aspect-video bg-gray-300' />
+      <Skeleton className='w-full aspect-video bg-gray-300 ' />
       <CardHeader>
-        <CardTitle>
-          <div className='w-3/4 h-6 rounded-full bg-gray-300' />
-        </CardTitle>
-        <CardDescription>
-          <div className='w-1/2 h-4 rounded-full bg-gray-300' />
-        </CardDescription>
+        {/* Card Title */}
+        <Skeleton className='w-3/4 h-6 rounded-full bg-gray-300' />
+
+        {/* Card Title Description */}
+        <Skeleton className='w-1/2 h-4 rounded-full bg-gray-300' />
       </CardHeader>
+
+      {/* Card Content */}
       <CardContent className='space-y-2'>
-        <div className='w-full h-4 rounded-full bg-gray-300' />
-        <div className='w-full h-4 rounded-full bg-gray-300' />
-        <div className='w-3/4 h-4 rounded-full bg-gray-300' />
+        <Skeleton className='w-full h-4 rounded-full bg-gray-300' />
+        <Skeleton className='w-full h-4 rounded-full bg-gray-300' />
+        <Skeleton className='w-3/4 h-4 rounded-full bg-gray-300' />
       </CardContent>
+
+      {/* Card Footer */}
       <CardFooter>
-        <Button className='w-full' disabled size='lg'></Button>
+        <Skeleton className='w-full h-10 rounded bg-gray-600' />
       </CardFooter>
     </Card>
+  );
+}
+
+// component that takes in number of ProductCardSkeleton to render
+export function ProductSkeletonGen({ count }: { count: number }) {
+  return (
+    <>
+      {[...Array(count)].map((_, index) => (
+        <ProductCardSkeleton key={index} />
+      ))}
+    </>
   );
 }
