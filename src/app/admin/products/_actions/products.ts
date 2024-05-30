@@ -1,8 +1,8 @@
 "use server"
 
 import db from '@/db/db';
-import { getItem } from '@/lib/getItem';
 import fs from 'fs/promises';
+import { revalidatePath } from 'next/cache';
 import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 
@@ -57,6 +57,8 @@ export async function addProduct(prevState: unknown, formData: FormData) {
     },
   });
 
+  revalidatePath('/');
+  revalidatePath('/products');
   redirect('/admin/products');
 }
 
@@ -73,7 +75,7 @@ export async function updateProduct(id: string, prevState: unknown, formData: Fo
   }
 
   const data = result.data;
-  const product = await getItem(id);
+  const product = await db.product.findUnique({ where: { id } });
 
   if (product === null) return notFound();
 
@@ -107,6 +109,8 @@ export async function updateProduct(id: string, prevState: unknown, formData: Fo
     },
   });
 
+  revalidatePath('/');
+  revalidatePath('/products');
   redirect('/admin/products');
 }
 
@@ -117,6 +121,9 @@ export async function toggleProductAvailability(id: string, isAvailableForPurcha
     // toggled boolean value
     data: { isAvailableForPurchase },
   });
+
+  revalidatePath('/');
+  revalidatePath('/products');
 }
 
 export async function deleteProduct(id: string) {
@@ -131,5 +138,8 @@ export async function deleteProduct(id: string) {
   const imagePath = `public${product.imagePath}`;
   await fs.unlink(filePath);
   await fs.unlink(imagePath);
+
+  revalidatePath('/');
+  revalidatePath('/products');
 
 }

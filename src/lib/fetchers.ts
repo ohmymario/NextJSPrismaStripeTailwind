@@ -47,13 +47,6 @@ export const fetchAllProducts = cache(
   ["/products", "fetchAllProducts"],
   { revalidate: 60 * 60 * 24 });
 
-export const getItem = reactCache((id: string) => {
-  return db.product.findUnique({
-    where: {
-      id,
-    },
-  });
-})
 
 export const getSingleProduct = cache(
   (id: string) => {
