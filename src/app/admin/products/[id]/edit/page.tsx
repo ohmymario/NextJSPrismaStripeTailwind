@@ -1,5 +1,5 @@
 // utils
-import { getItem } from '@/lib/getItem';
+import db from '@/db/db';
 
 // components
 import PageHeader from '../../../_components/PageHeader';
@@ -11,9 +11,17 @@ interface EditProductPageProps {
   };
 }
 
+const getSingleProduct = (id: string) => {
+  return db.product.findUnique({
+    where: {
+      id,
+    },
+  });
+};
+
 export default async function EditProductPage(props: EditProductPageProps) {
   const { id } = props.params;
-  const product = await getItem(id);
+  const product = await getSingleProduct(id);
 
   return (
     <>
