@@ -1,10 +1,20 @@
-import { ProductCard, ProductCardSkeleton } from '@/components/ProductCard';
-import { Button } from '@/components/ui/button';
-import db from '@/db/db';
-import { Product } from '@prisma/client';
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+// React
 import { Suspense, use } from 'react';
+
+// Prisma
+import { Product } from '@prisma/client';
+
+// Next
+import Link from 'next/link';
+
+// Shadcn
+import { Button } from '@/components/ui/button';
+
+// Icons
+import { ArrowRight } from 'lucide-react';
+
+// Components
+import { ProductCard, ProductCardSkeleton } from '@/components/ProductCard';
 
 import { fetchMostPopularProducts, fetchNewestProducts } from '@/lib/fetchers';
 
