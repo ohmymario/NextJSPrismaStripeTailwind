@@ -1,50 +1,30 @@
-import { ProductCard, ProductCardSkeleton } from '@/components/ProductCard';
-import db from '@/db/db';
-import { cache } from '@/lib/fetchers';
-import { Suspense } from 'react';
+// React
+import { Suspense, use } from 'react';
 
-const getProducts = cache(() => {
-  return db.product.findMany({
-    where: { isAvailableForPurchase: true },
-    orderBy: { name: 'asc' },
-  });
-}, ['/products', 'getProducts']);
+// Components
+import { ProductCard, ProductSkeletonGen } from '@/components/ProductCard';
+
+// Fetchers
+import { fetchAllProducts } from '@/lib/fetchers';
 
 export default function ProductsPage() {
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-      <Suspense
-        fallback={
-          <>
-            <ProductCardSkeleton />
-            <ProductCardSkeleton />
-            <ProductCardSkeleton />
-            <ProductCardSkeleton />
-            <ProductCardSkeleton />
-            <ProductCardSkeleton />
-          </>
-        }
-      >
+      <Suspense fallback={<ProductSkeletonGen count={4} />}>
         <ProductsSuspense />
       </Suspense>
     </div>
   );
 }
 
-function ProductGridSkeleton() {
+function ProductsSuspense() {
+  const products = use(fetchAllProducts());
+
   return (
     <>
-      <ProductCardSkeleton />
-      <ProductCardSkeleton />
-      <ProductCardSkeleton />
-      <ProductCardSkeleton />
-      <ProductCardSkeleton />
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
     </>
   );
-}
-
-async function ProductsSuspense() {
-  const products = await getProducts();
-
-  return products.map((product) => <ProductCard key={product.id} {...product} />);
 }
