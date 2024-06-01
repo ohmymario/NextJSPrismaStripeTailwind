@@ -14,8 +14,9 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
 // Components
-import { ProductCard, ProductCardSkeleton } from '@/components/ProductCard';
+import { ProductCard, ProductSkeletonGen } from '@/components/ProductCard';
 
+// Fetchers
 import { fetchMostPopularProducts, fetchNewestProducts } from '@/lib/fetchers';
 
 export default async function HomePage() {
@@ -46,20 +47,11 @@ function ProductGridSection({ productsFetcher, title }: ProductGridSectionProps)
         </Button>
       </div>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4'>
-        <Suspense fallback={<ProductGridSkeleton />}>
+        <Suspense fallback={<ProductSkeletonGen count={2} />}>
           <ProductList productsFetcher={productsFetcher} />
         </Suspense>
       </div>
     </div>
-  );
-}
-
-function ProductGridSkeleton() {
-  return (
-    <>
-      <ProductCardSkeleton />
-      <ProductCardSkeleton />
-    </>
   );
 }
 
