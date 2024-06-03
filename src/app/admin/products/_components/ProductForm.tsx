@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { formatCurrency } from '@/lib/formatters';
 
 // actions
-import { addProduct, updateProduct } from '../_actions/products';
+import { addProduct, updateProduct } from '../../_actions/products';
 import { Textarea } from '@/components/ui/textarea';
 import { Product } from '@prisma/client';
 import Image from 'next/image';
