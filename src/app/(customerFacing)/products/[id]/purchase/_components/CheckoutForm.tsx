@@ -3,10 +3,11 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/formatters';
-import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { Elements, LinkAuthenticationElement, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { StripeLinkAuthenticationElementChangeEvent, loadStripe } from '@stripe/stripe-js';
 import Image from 'next/image';
-import { format } from 'path';
+import { FormEvent, useState } from 'react';
+import { input } from 'zod';
 
 interface Product {
   imagePath: string;
@@ -47,24 +48,66 @@ function Form({ priceInCents }: { priceInCents: number }) {
   const stripe = useStripe();
   const elements = useElements();
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [email, setEmail] = useState<string>('');
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+
+    // Check if stripe and elements are loaded
+    if (!stripe || !elements || !email) return;
+
+    // Handle Loading
+    setIsLoading(true);
+
+    // Handle payment
+    stripe
+      .confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/stripe/purchase-success`,
+        },
+      })
+      .then((res) => {
+        const { error } = res;
+        if (error.type === 'card_error' || error.type === 'validation_error') {
+          setErrorMessage(error.message);
+        } else {
+          setErrorMessage(`An unexpected error occurred. Please try again.`);
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
+  function handleEmail(e: StripeLinkAuthenticationElementChangeEvent) {
+    setEmail(e.value.email);
+  }
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <Card>
         {/* Header */}
         <CardHeader>
           <CardTitle>Checkout</CardTitle>
-          <CardDescription className='text-destructive'>Error</CardDescription>
+
+          {/* Error Message */}
+          {errorMessage && <CardDescription className='text-destructive'>{errorMessage}</CardDescription>}
         </CardHeader>
 
         {/* Stripe Payment */}
         <CardContent>
           <PaymentElement />
+          <div className='h-4' />
+          <LinkAuthenticationElement onChange={handleEmail} />
         </CardContent>
 
         {/* Footer */}
         <CardFooter>
-          <Button className='w-full' size='lg' disabled={stripe == null || elements == null}>
-            Purchase - {formatCurrency(priceInCents / 100)}
+          <Button className='w-full' size='lg' disabled={stripe == null || elements == null || isLoading}>
+            {isLoading ? 'Purchasing...' : `Purchase - ${formatCurrency(priceInCents / 100)}`}
           </Button>
         </CardFooter>
       </Card>
