@@ -1,5 +1,6 @@
 'use client';
 
+import { userOrderExists } from '@/app/actions/orders';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/formatters';
@@ -7,9 +8,9 @@ import { Elements, LinkAuthenticationElement, PaymentElement, useElements, useSt
 import { StripeLinkAuthenticationElementChangeEvent, loadStripe } from '@stripe/stripe-js';
 import Image from 'next/image';
 import { FormEvent, useState } from 'react';
-import { input } from 'zod';
 
 interface Product {
+  id: string;
   imagePath: string;
   name: string;
   priceInCents: number;
@@ -38,13 +39,13 @@ export default function CheckoutForm({ product, clientSecret }: CheckoutFormProp
       </div>
 
       <Elements options={{ clientSecret }} stripe={stripePromise}>
-        <Form priceInCents={product.priceInCents} />
+        <Form priceInCents={product.priceInCents} productId={product.id} />
       </Elements>
     </div>
   );
 }
 
-function Form({ priceInCents }: { priceInCents: number }) {
+function Form({ priceInCents, productId }: { priceInCents: number; productId: string }) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -52,16 +53,20 @@ function Form({ priceInCents }: { priceInCents: number }) {
   const [errorMessage, setErrorMessage] = useState<string>();
   const [email, setEmail] = useState<string>('');
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-
-    // Check if stripe and elements are loaded
     if (!stripe || !elements || !email) return;
 
-    // Handle Loading
     setIsLoading(true);
 
-    // Handle payment
+    const orderExists = await userOrderExists(email, productId);
+
+    if (orderExists) {
+      setErrorMessage(`You've already purchased this product.`);
+      setIsLoading(false);
+      return;
+    }
+
     stripe
       .confirmPayment({
         elements,
