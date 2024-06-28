@@ -89,11 +89,8 @@ function Form({ priceInCents }: { priceInCents: number }) {
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        {/* Header */}
         <CardHeader>
           <CardTitle>Checkout</CardTitle>
-
-          {/* Error Message */}
           {errorMessage && <CardDescription className='text-destructive'>{errorMessage}</CardDescription>}
         </CardHeader>
 
@@ -104,7 +101,6 @@ function Form({ priceInCents }: { priceInCents: number }) {
           <LinkAuthenticationElement onChange={handleEmail} />
         </CardContent>
 
-        {/* Footer */}
         <CardFooter>
           <Button className='w-full' size='lg' disabled={stripe == null || elements == null || isLoading}>
             {isLoading ? 'Purchasing...' : `Purchase - ${formatCurrency(priceInCents / 100)}`}
