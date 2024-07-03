@@ -18,7 +18,6 @@ export async function GET(
   const file = await fs.readFile(product.filePath);
   const extension = product.filePath.split('.').pop();
 
-
   return new NextResponse(file, {
     headers: {
       'Content-Type': `application/${extension}`,

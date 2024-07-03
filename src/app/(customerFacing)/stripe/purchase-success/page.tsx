@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import db from '@/db/db';
 import { formatCurrency } from '@/lib/formatters';
 import Image from 'next/image';
@@ -21,6 +22,8 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   if (!product) return notFound();
 
   const isSuccess = paymentIntent.status === 'succeeded';
+
+  // const downloadLink = await createDownloadVerification(product.id);
 
   return (
     <div className='max-w-5xl w-full mx-auto space-y-8'>
