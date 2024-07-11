@@ -63,10 +63,10 @@ export async function POST(req: NextRequest) {
     });
 
     const { data, error } = await resend.emails.send({
-      from: 'Acme <onboarding@resend.dev>',
-      to: ['delivered@resend.dev'],
-      subject: 'Hello world',
-      react: <h1>Hi</h1>,
+      from: 'Support <onboarding@resend.dev>',
+      to: email,
+      subject: 'Order Confirmaton',
+      react: <h1>Your Order is ready to download</h1>,
     });
   }
 
