@@ -62,7 +62,7 @@ function Form({ priceInCents, productId }: { priceInCents: number; productId: st
     const orderExists = await userOrderExists(email, productId);
 
     if (orderExists) {
-      setErrorMessage(`You've already purchased this product.`);
+      setErrorMessage(`You've already purchased this product. Try downloading it from the My Orders page.`);
       setIsLoading(false);
       return;
     }
