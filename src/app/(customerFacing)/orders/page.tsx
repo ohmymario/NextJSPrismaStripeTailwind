@@ -4,11 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFormStatus } from 'react-dom';
+import { useFormState, useFormStatus } from 'react-dom';
+import { emailOrderHistory } from '@/actions/orders';
 
 export default function OrdersPage() {
+  const [data, action] = useFormState(emailOrderHistory, {});
+
   return (
-    <form className='max-2-xl mx-auto'>
+    <form action={action} className='max-2-xl mx-auto'>
       <Card>
         <CardHeader>
           <CardTitle>My Orders</CardTitle>
@@ -18,13 +21,13 @@ export default function OrdersPage() {
         <CardContent>
           <div className='space-y-2'>
             <Label>Email</Label>
-            <Input type='email' />
+            <Input type='email' name='email' id='email' required />
           </div>
+
+          {data.error && <div className='text-destructive'>{data.error}</div>}
         </CardContent>
 
-        <CardFooter>
-          <SubmitButton />
-        </CardFooter>
+        <CardFooter>{data.message ? <p className='text-success'>{data.message}</p> : <SubmitButton />}</CardFooter>
       </Card>
     </form>
   );
