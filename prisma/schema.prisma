@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -22,6 +22,8 @@ model Product {
   updatedAt              DateTime                @updatedAt
   orders                 Order[]
   DownloadVerifications  DownloadVerifications[]
+
+  DiscountCode DiscountCode[]
 }
 
 model User {
@@ -47,6 +49,10 @@ model Order {
 
   // if product is deleted, restrict the deletion if a previous order exists
   product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  // if discount code is deleted, restrict the deletion if a previous order exists
+  discountCodeId String
+  DiscountCode   DiscountCode? @relation(fields: [discountCodeId], references: [id], onDelete: Restrict)
 }
 
 model DownloadVerifications {
@@ -57,4 +63,25 @@ model DownloadVerifications {
   productId String
   // Relationships
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model DiscountCode {
+  id            String           @id @default(uuid())
+  code          String           @unique
+  discountAmout Int
+  discountType  DiscountCodeType
+  uses          Int              @default(0)
+  isActive      Boolean          @default(true)
+  allProducts   Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+  limit         Int?
+  expiresAt     DateTime?
+
+  products Product[]
+  orders   Order[]
+}
+
+enum DiscountCodeType {
+  PERCENTAGE
+  FIXED
 }
