@@ -1,48 +1,68 @@
 'use client';
 
 // react
-import { useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 
 // shadcn
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-// utils
-import { formatCurrency } from '@/lib/formatters';
+import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 // actions
-import { addProduct, updateProduct } from '../../_actions/products';
-import { Textarea } from '@/components/ui/textarea';
-import { Product } from '@prisma/client';
-import Image from 'next/image';
+import { DiscountCodeType } from '@prisma/client';
+import { useState } from 'react';
+import { addDiscountCode } from '../../_actions/discountCodes';
 
-interface ProductFormProps {
-  product?: Product | null;
-}
+const getCurrentDateTimeLocal = () => {
+  // Chatgpt Function
+  const now = new Date();
+  const offset = now.getTimezoneOffset();
+  const adjustedDate = new Date(now.getTime() - offset * 60 * 1000); // Adjust for timezone offset
+  return adjustedDate.toISOString().slice(0, 16); // Use slice to get 'YYYY-MM-DDTHH:MM' format
+};
 
 export default function DiscountCodeForm() {
   const [error, action] = useFormState(addDiscountCode, {});
 
+  const [allProducts, setAllProducts] = useState(true);
+
   return (
     <form className='space-y-8' action={action}>
-      {/* Name of Code */}
+      {/* CODE */}
       <div className='space-y-2'>
-        <Label htmlFor='code'>Name</Label>
+        {/* Name of Code */}
+
+        <Label htmlFor='code'>Code</Label>
         <Input type='text' id='code' name='code' required />
         {error.code && <div className='text-destructive'>{error.code}</div>}
       </div>
 
-      {/* Name of Code */}
+      {/* TYPE AND AMOUNT */}
       <div className='space-y-2 gap-8 flex items-baseline'>
-        {/* SHADCN RADIO BUTTONS */}
+        {/* Discount Type */}
         <div className='space-y-2'>
-          <Label htmlFor='code'>Name</Label>
-          <Input type='text' id='code' name='name' required />
-          {error.code && <div className='text-destructive'>{error.code}</div>}
+          <Label htmlFor='discountType'>Discount Type</Label>
+
+          <RadioGroup id='discountType' defaultValue={DiscountCodeType.PERCENTAGE}>
+            {/* PERCENTAGE */}
+            <div className='flex gap-2 items-center'>
+              <RadioGroupItem value={DiscountCodeType.PERCENTAGE} id='percentage' />
+              <Label htmlFor='percentage'>Percentage</Label>
+            </div>
+
+            {/* FIXED */}
+            <div className='flex gap-2 items-center'>
+              <RadioGroupItem value={DiscountCodeType.FIXED} id='fixed' />
+              <Label htmlFor='fixed'>Fixed</Label>
+            </div>
+          </RadioGroup>
+
+          {error.discountType && <div className='text-destructive'>{error.discountType}</div>}
         </div>
 
+        {/* AMOUNT DISCOUNTED*/}
         <div className='space-y-2 flex-grow'>
           <Label htmlFor='discountAmount'>Discount Amount</Label>
           <Input type='number' id='discountAmount' name='discountAmount' required />
@@ -50,6 +70,46 @@ export default function DiscountCodeForm() {
         </div>
       </div>
 
+      {/* LIMIT */}
+      <div className='space-y-2'>
+        <Label htmlFor='limit'>Limit</Label>
+        <Input type='number' id='limit' name='limit' />
+        <div>Leave blank for infinite uses</div>
+        {error.limit && <div className='text-destructive'>{error.limit}</div>}
+      </div>
+
+      {/* Expiration Date */}
+      <div className='space-y-2'>
+        <Label htmlFor='expire'>Expiration</Label>
+        <Input
+          type='datetime-local'
+          min={getCurrentDateTimeLocal()} // Use the current date and time
+          id='expire'
+          name='expire'
+          className='w-max'
+        />
+        <div>Leave blank for no expiration</div>
+
+        {error.expire && <div className='text-destructive'>{error.expire}</div>}
+      </div>
+
+      {/* CODE */}
+      <div className='space-y-2'>
+        {/* Name of Code */}
+
+        <Label>Allowed Products</Label>
+        <div className='flex gap-2 items-center'>
+          <Checkbox
+            id='allProducts'
+            name='allProducts'
+            checked={allProducts}
+            onCheckedChange={(e) => setAllProducts(e === true)}
+          />
+          <Label htmlFor='allProducts'>All Products</Label>
+        </div>
+
+        {error.code && <div className='text-destructive'>{error.code}</div>}
+      </div>
       <SubmitButton />
     </form>
   );

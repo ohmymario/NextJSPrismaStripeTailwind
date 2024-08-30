@@ -1,50 +1,67 @@
-import { TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { formatCurrency, formatNumber } from '@/lib/formatters';
-
-import { Button } from '@react-email/components';
-import { Link, Table, CheckCircle2, XCircle, MoreVertical } from 'lucide-react';
+// Components
 import PageHeader from '../_components/PageHeader';
-import { ActiveToggleDropdownItem, DeleteDropdownItem } from '../products/_components/ProductActions';
+
+// Shadcn
+import { Button } from '@/components/ui/button';
+import { Table, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
 import db from '@/db/db';
+import { Prisma } from '@prisma/client';
+import Link from 'next/link';
 
 interface DiscountCodesProps {}
 
-function getExpiredDiscountCodes() {
-  db.discountCode.findMany({
-    select: {},
-    where: {
-      OR: [{ limit: { not: null, lte: 1 } }, { expiresAt: { not: null, lte: new Date() } }],
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+const WHERE_EXPIRED: Prisma.DiscountCodeWhereInput = {
+  // any of these are true will be included in the results
+  // not: null = is not expired
+  // or
+  // lte: 1 = has 1 or less uses
+  OR: [{ limit: { not: null, lte: 1 } }, { expiresAt: { not: null, lte: new Date() } }],
+};
 
-  return [];
+function getExpiredDiscountCodes() {
+  return db.discountCode.findMany({
+    // select: {},
+    where: WHERE_EXPIRED,
+    orderBy: { createdAt: 'asc' },
+  });
 }
 
 function getActiveDiscountCodes() {
-  return [];
+  return db.discountCode.findMany({
+    // select: {},
+    where: { NOT: WHERE_EXPIRED },
+    orderBy: { createdAt: 'asc' },
+  });
 }
 
-export default function DiscountCodes(props: DiscountCodesProps) {
+export default async function DiscountCodes(props: DiscountCodesProps) {
+  const [expiredDiscountCodes, activeDiscountCodes] = await Promise.all([
+    getExpiredDiscountCodes(),
+    getActiveDiscountCodes(),
+  ]);
+
   return (
     <>
       <div className='flex justify-between items-center gap-4 '>
         <PageHeader>Coupons</PageHeader>
         <Button>
-          <Link href='/admin/products/new'>Add Product</Link>
+          <Link href='/admin/discount-codes/new'>Add Coupon</Link>
         </Button>
       </div>
-      <DiscountCodesTable />
+      <DiscountCodesTable discountCodes={activeDiscountCodes} />
 
       <div>
         <h2 className='text-xl font-bold'>Expired Coupons</h2>
-        <DiscountCodesTable />
+        <DiscountCodesTable discountCodes={expiredDiscountCodes} />
       </div>
     </>
   );
 }
 
 function DiscountCodesTable() {
+  return null;
+
   return (
     <Table>
       <TableHeader>
