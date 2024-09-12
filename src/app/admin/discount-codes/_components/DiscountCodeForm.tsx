@@ -23,9 +23,15 @@ const getCurrentDateTimeLocal = () => {
   return adjustedDate.toISOString().slice(0, 16); // Use slice to get 'YYYY-MM-DDTHH:MM' format
 };
 
-export default function DiscountCodeForm() {
-  const [error, action] = useFormState(addDiscountCode, {});
+interface DiscountCodeFormProps {
+  products: {
+    id: string;
+    name: string;
+  }[];
+}
 
+export default function DiscountCodeForm({ products }: DiscountCodeFormProps) {
+  const [error, action] = useFormState(addDiscountCode, {});
   const [allProducts, setAllProducts] = useState(true);
 
   return (
@@ -45,7 +51,7 @@ export default function DiscountCodeForm() {
         <div className='space-y-2'>
           <Label htmlFor='discountType'>Discount Type</Label>
 
-          <RadioGroup id='discountType' defaultValue={DiscountCodeType.PERCENTAGE}>
+          <RadioGroup id='discountType' name='discountType' defaultValue={DiscountCodeType.PERCENTAGE}>
             {/* PERCENTAGE */}
             <div className='flex gap-2 items-center'>
               <RadioGroupItem value={DiscountCodeType.PERCENTAGE} id='percentage' />
@@ -59,7 +65,9 @@ export default function DiscountCodeForm() {
             </div>
           </RadioGroup>
 
-          {error.discountType && <div className='text-destructive'>{error.discountType}</div>}
+          {error.discountType && (
+            <div className='text-destructive'>{` error for discount type ${error.discountType}`}</div>
+          )}
         </div>
 
         {/* AMOUNT DISCOUNTED*/}
@@ -80,22 +88,23 @@ export default function DiscountCodeForm() {
 
       {/* Expiration Date */}
       <div className='space-y-2'>
-        <Label htmlFor='expire'>Expiration</Label>
+        <Label htmlFor='expiresAt'>Expiration</Label>
         <Input
           type='datetime-local'
           min={getCurrentDateTimeLocal()} // Use the current date and time
-          id='expire'
-          name='expire'
+          id='expiresAt'
+          name='expiresAt'
           className='w-max'
         />
         <div>Leave blank for no expiration</div>
 
-        {error.expire && <div className='text-destructive'>{error.expire}</div>}
+        {error.expiresAt && <div className='text-destructive'>{error.expiresAt}</div>}
       </div>
 
       {/* CODE */}
       <div className='space-y-2'>
-        {/* Name of Code */}
+        {error.allProducts && <div className='text-destructive'>{error.allProducts}</div>}
+        {error.productIds && <div className='text-destructive'>{error.productIds}</div>}
 
         <Label>Allowed Products</Label>
         <div className='flex gap-2 items-center'>
@@ -108,8 +117,15 @@ export default function DiscountCodeForm() {
           <Label htmlFor='allProducts'>All Products</Label>
         </div>
 
-        {error.code && <div className='text-destructive'>{error.code}</div>}
+        {products.map((product) => (
+          <div key={product.id} className='flex gap-2 items-center'>
+            <Checkbox id={product.id} name='productIds' disabled={allProducts} value={product.id} />
+            <Label htmlFor={product.id}>{product.name}</Label>
+          </div>
+        ))}
       </div>
+
+      {/* SUBMIT */}
       <SubmitButton />
     </form>
   );
