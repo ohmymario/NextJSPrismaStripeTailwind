@@ -22,8 +22,7 @@ model Product {
   updatedAt              DateTime                @updatedAt
   orders                 Order[]
   DownloadVerifications  DownloadVerifications[]
-
-  DiscountCode DiscountCode[]
+  discountCodes          DiscountCode[]
 }
 
 model User {
@@ -52,7 +51,7 @@ model Order {
 
   // if discount code is deleted, restrict the deletion if a previous order exists
   discountCodeId String
-  DiscountCode   DiscountCode? @relation(fields: [discountCodeId], references: [id], onDelete: Restrict)
+  discountCode   DiscountCode? @relation(fields: [discountCodeId], references: [id], onDelete: Restrict)
 }
 
 model DownloadVerifications {
@@ -66,16 +65,16 @@ model DownloadVerifications {
 }
 
 model DiscountCode {
-  id            String           @id @default(uuid())
-  code          String           @unique
-  discountAmout Int
-  discountType  DiscountCodeType
-  uses          Int              @default(0)
-  isActive      Boolean          @default(true)
-  allProducts   Boolean          @default(false)
-  createdAt     DateTime         @default(now())
-  limit         Int?
-  expiresAt     DateTime?
+  id             String           @id @default(uuid())
+  code           String           @unique
+  discountAmount Int
+  discountType   DiscountCodeType
+  uses           Int              @default(0)
+  isActive       Boolean          @default(true)
+  allProducts    Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  limit          Int?
+  expiresAt      DateTime?
 
   products Product[]
   orders   Order[]
