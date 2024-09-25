@@ -1,15 +1,44 @@
 // Components
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import PageHeader from '../_components/PageHeader';
 
 // Shadcn
 import { Button } from '@/components/ui/button';
-import { Table, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 import db from '@/db/db';
-import { Prisma } from '@prisma/client';
+import { $Enums, Prisma } from '@prisma/client';
 import Link from 'next/link';
+import { formatCurrency, formatDiscountType, formatNumber } from '@/lib/formatters';
+import { CheckCircle2, XCircle, MoreVertical } from 'lucide-react';
+import { ActiveToggleDropdownItem, DeleteDropdownItem } from '../products/_components/ProductActions';
 
 interface DiscountCodesProps {}
+
+interface DiscountCodesTableProps {
+  discountCodes: Awaited<
+    Prisma.PrismaPromise<
+      {
+        id: string;
+        code: string;
+        discountAmount: number;
+        discountType: $Enums.DiscountCodeType;
+        uses: number;
+        isActive: boolean;
+        allProducts: boolean;
+        createdAt: Date;
+        limit: number | null;
+        expiresAt: Date | null;
+      }[]
+    >
+  >;
+}
 
 const WHERE_EXPIRED: Prisma.DiscountCodeWhereInput = {
   // any of these are true will be included in the results
@@ -59,44 +88,46 @@ export default async function DiscountCodes(props: DiscountCodesProps) {
   );
 }
 
-function DiscountCodesTable() {
-  return null;
-
+function DiscountCodesTable({ discountCodes }: DiscountCodesTableProps) {
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead className='w-0'>
-            <span className='sr-only'>Available for Purchase</span>
+            <span className='sr-only'>Activated Discount Codes</span>
           </TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead>Price</TableHead>
+          <TableHead>Code</TableHead>
+          <TableHead>Discount</TableHead>
+          <TableHead>Expires</TableHead>
+          <TableHead>Remaining Uses</TableHead>
           <TableHead>Orders</TableHead>
+          <TableHead>Products</TableHead>
           <TableHead className='w-0'>
+            <span className='sr-only'>Deleting</span>
+            <span className='sr-only'>Activating</span>
             <span className='sr-only'>Actions</span>
           </TableHead>
         </TableRow>
       </TableHeader>
-      {/* 
+
       <TableBody>
-        {products.map((product) => (
-          <TableRow key={product.id}>
+        {discountCodes.map((discountCode) => (
+          <TableRow key={discountCode.id}>
             <TableCell className='w-0'>
-              {product.isAvailableForPurchase ? (
+              {discountCode.isActive ? (
                 <>
-                  <span className='sr-only'>Available</span>
+                  <span className='sr-only'>Active</span>
                   <CheckCircle2 />
                 </>
               ) : (
                 <>
-                  <span className='sr-only'>Unavailable</span>
+                  <span className='sr-only'>Inactive</span>
                   <XCircle className='stroke-destructive' />
                 </>
               )}
             </TableCell>
-            <TableCell>{product.name}</TableCell>
-            <TableCell>{formatCurrency(product.priceInCents / 100)}</TableCell>
-            <TableCell>{formatNumber(product._count.orders)}</TableCell>
+            <TableCell>{discountCode.code}</TableCell>
+            <TableCell>{formatDiscountType(discountCode) as string}</TableCell>
             <TableCell>
               <DropdownMenu>
                 <DropdownMenuTrigger>
@@ -105,23 +136,26 @@ function DiscountCodesTable() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
-                    <a href={`/admin/products/${product.id}/download`}>Download</a>
+                    <a href={`/admin/discountCodes/${discountCode.id}/download`}>Download</a>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <a href={`/admin/products/${product.id}/edit`}>Edit</a>
+                    <a href={`/admin/discountCodes/${discountCode.id}/edit`}>Edit</a>
                   </DropdownMenuItem>
 
-                  <ActiveToggleDropdownItem id={product.id} isAvailableForPurchase={product.isAvailableForPurchase} />
+                  {/* <ActiveToggleDropdownItem
+                    id={discountCode.id}
+                    isAvailableForPurchase={discountCode.isAvailableForPurchase}
+                  /> */}
 
                   <DropdownMenuSeparator />
 
-                  <DeleteDropdownItem id={product.id} disabled={product._count.orders > 0} />
+                  {/* <DeleteDropdownItem id={discountCode.id} disabled={discountCode._count.orders > 0} /> */}
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
           </TableRow>
         ))}
-      </TableBody> */}
+      </TableBody>
     </Table>
   );
 }
