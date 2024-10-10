@@ -32,7 +32,7 @@ interface DiscountCodesTableProps {
         discountType: $Enums.DiscountCodeType;
         uses: number;
         isActive: boolean;
-        allProducts: Product[];
+        allProducts: boolean;
         createdAt: Date;
         limit: number | null;
         expiresAt: Date | null;
@@ -150,7 +150,6 @@ function DiscountCodesTable({ discountCodes }: DiscountCodesTableProps) {
           }) => (
             <TableRow key={id}>
               {/* Discount Code Status */}
-
               <TableCell className='w-0'>
                 {isActive ? (
                   <>
@@ -168,7 +167,6 @@ function DiscountCodesTable({ discountCodes }: DiscountCodesTableProps) {
               <TableCell>{formatDiscountType({ discountAmount, discountType }) as string}</TableCell>
               <TableCell>{expiresAt === null ? <Minus /> : formatDateTime(expiresAt)}</TableCell>
               <TableCell>{limit === null ? <Infinity /> : `${limit - uses}`}</TableCell>
-              <TableCell>{formatNumber(_count.orders)}</TableCell>
               <TableCell>{formatNumber(_count.orders)}</TableCell>
               <TableCell>{allProducts ? <Globe /> : products.map(({ name }) => name).join(', ')}</TableCell>
 
