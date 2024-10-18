@@ -1,6 +1,6 @@
 import { TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { formatCurrency } from '@/lib/formatters';
-import { MoreVertical } from 'lucide-react';
+import { Minus, MoreVertical } from 'lucide-react';
 import { DeleteDropDownItem } from './OrderActions';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
@@ -10,6 +10,7 @@ interface OrdersBodyProps {
     pricePaidInCents: number;
     product: { name: string };
     user: { email: string };
+    discountCode: { code: string } | null;
   }[];
 }
 
@@ -21,7 +22,7 @@ export default function OrdersBody({ orders }: OrdersBodyProps) {
           <TableCell>{order.product.name}</TableCell>
           <TableCell>{order.user.email}</TableCell>
           <TableCell>{formatCurrency(order.pricePaidInCents / 100)}</TableCell>
-
+          <TableCell>{order.discountCode === null ? <Minus /> : order.discountCode.code}</TableCell>
           {/* MENU */}
           <TableCell className='text-center'>
             <DropdownMenu>

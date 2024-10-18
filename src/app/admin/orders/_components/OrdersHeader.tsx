@@ -9,6 +9,7 @@ export default function OrdersHeader(props: OrdersHeaderProps) {
         <TableHead>Product</TableHead>
         <TableHead>Customer</TableHead>
         <TableHead>Price Paid</TableHead>
+        <TableHead>Coupon</TableHead>
         <TableHead className='w-0'>
           <span className='sr-only'>Actions</span>
         </TableHead>

@@ -10,6 +10,7 @@ function getOrders() {
       pricePaidInCents: true,
       product: { select: { name: true } },
       user: { select: { email: true } },
+      discountCode: { select: { code: true } },
     },
     orderBy: { createdAt: 'desc' },
   });

@@ -88,6 +88,15 @@ export default function DiscountCodeForm({ products }: DiscountCodeFormProps) {
 
       {/* Expiration Date */}
       <div className='space-y-2'>
+        {/* use shadcn date picker in the future */}
+        {/* <Calendar
+          mode='single'
+          selected={date}
+          onSelect={setDate}
+          fromDate={new Date()} // Disables past dates from current date
+          toDate={new Date()} // Disables future dates from current date
+          initialFocus
+        /> */}
         <Label htmlFor='expiresAt'>Expiration</Label>
         <Input
           type='datetime-local'
