@@ -1,13 +1,22 @@
 'use client';
 
-import { userOrderExists } from '@/app/actions/orders';
+// React
+import { FormEvent, useState } from 'react';
+
+// Nextjs
+import Image from 'next/image';
+
+// stripe
+import { loadStripe, StripeLinkAuthenticationElementChangeEvent } from '@stripe/stripe-js';
+import { Elements, LinkAuthenticationElement, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
+
+// shadcn
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+
+// utils
+import { userOrderExists } from '@/app/actions/orders';
 import { formatCurrency } from '@/lib/formatters';
-import { Elements, LinkAuthenticationElement, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import { StripeLinkAuthenticationElementChangeEvent, loadStripe } from '@stripe/stripe-js';
-import Image from 'next/image';
-import { FormEvent, useState } from 'react';
 
 interface Product {
   id: string;
