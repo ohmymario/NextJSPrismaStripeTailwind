@@ -1,7 +1,7 @@
 'use client';
 
 // React
-import { FormEvent, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 
 // Nextjs
 import Image from 'next/image';
@@ -11,12 +11,15 @@ import { loadStripe, StripeLinkAuthenticationElementChangeEvent } from '@stripe/
 import { Elements, LinkAuthenticationElement, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
 // shadcn
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 // utils
 import { userOrderExists } from '@/app/actions/orders';
 import { formatCurrency } from '@/lib/formatters';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 interface Product {
   id: string;
@@ -55,12 +58,22 @@ export default function CheckoutForm({ product, clientSecret }: CheckoutFormProp
 }
 
 function Form({ priceInCents, productId }: { priceInCents: number; productId: string }) {
+  // stripe hooks
   const stripe = useStripe();
-  const elements = useElements();
+  const elements = useElements(); // refs
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
+  // react hooks
+  const discountCodeRef = useRef<HTMLInputElement>(null);
+
+  // next hooks
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // state
   const [email, setEmail] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -100,6 +113,12 @@ function Form({ priceInCents, productId }: { priceInCents: number; productId: st
     setEmail(e.value.email);
   }
 
+  const handleCoupon = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set('coupon', discountCodeRef.current?.value ?? '');
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <Card>
@@ -111,8 +130,24 @@ function Form({ priceInCents, productId }: { priceInCents: number; productId: st
         {/* Stripe Payment */}
         <CardContent>
           <PaymentElement />
-          <div className='h-4' />
-          <LinkAuthenticationElement onChange={handleEmail} />
+          <div className='mt-4'>
+            <LinkAuthenticationElement onChange={handleEmail} />
+          </div>
+          {/* Coupon Code */}
+
+          <div className='space-y-2 mt-4'>
+            <Label htmlFor='discountCode'>Coupon</Label>
+            <div className='flex items-center gap-4 '>
+              <Input
+                id='discountCode'
+                type='text'
+                name='discountCode'
+                className='w-full max-w-xs'
+                ref={discountCodeRef}
+              />
+              <Button onClick={handleCoupon}>Apply</Button>
+            </div>
+          </div>
         </CardContent>
 
         <CardFooter>
