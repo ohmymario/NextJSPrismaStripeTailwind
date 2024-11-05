@@ -35,7 +35,7 @@ export function formatDiscountType({ discountAmount, discountType }: { discountA
     return formatCurrency(discountAmount);
   }
 
-  return new Error(`Unknown discount type: ${discountType satisfies never}`);
+  throw new Error(`Unknown discount type: ${discountType satisfies never}`);
 }
 
 export function formatDateTime(date: Date) {
