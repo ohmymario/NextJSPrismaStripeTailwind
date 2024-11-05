@@ -5,10 +5,14 @@ import { FormEvent, useRef, useState } from 'react';
 
 // Nextjs
 import Image from 'next/image';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 // stripe
 import { loadStripe, StripeLinkAuthenticationElementChangeEvent } from '@stripe/stripe-js';
 import { Elements, LinkAuthenticationElement, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
+
+// prisma
+import { DiscountCode } from '@prisma/client';
 
 // shadcn
 import { Input } from '@/components/ui/input';
@@ -18,8 +22,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 // utils
 import { userOrderExists } from '@/app/actions/orders';
-import { formatCurrency } from '@/lib/formatters';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { formatCurrency, formatDiscountType } from '@/lib/formatters';
 
 interface Product {
   id: string;
@@ -32,11 +35,18 @@ interface Product {
 interface CheckoutFormProps {
   product: Product;
   clientSecret: string;
+  discountCode?: Pick<DiscountCode, 'id' | 'discountAmount' | 'discountType'> | null;
+}
+
+interface FormProps {
+  priceInCents: number;
+  productId: string;
+  discountCode?: Pick<DiscountCode, 'id' | 'discountAmount' | 'discountType'> | null;
 }
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string);
 
-export default function CheckoutForm({ product, clientSecret }: CheckoutFormProps) {
+export default function CheckoutForm({ product, clientSecret, discountCode }: CheckoutFormProps) {
   return (
     <div className='max-w-5xl w-full mx-auto space-y-8'>
       <div className='flex gap-4 items-center'>
@@ -51,13 +61,13 @@ export default function CheckoutForm({ product, clientSecret }: CheckoutFormProp
       </div>
 
       <Elements options={{ clientSecret }} stripe={stripePromise}>
-        <Form priceInCents={product.priceInCents} productId={product.id} />
+        <Form priceInCents={product.priceInCents} productId={product.id} discountCode={discountCode} />
       </Elements>
     </div>
   );
 }
 
-function Form({ priceInCents, productId }: { priceInCents: number; productId: string }) {
+function Form({ priceInCents, productId, discountCode }: FormProps) {
   // stripe hooks
   const stripe = useStripe();
   const elements = useElements(); // refs
@@ -69,6 +79,9 @@ function Form({ priceInCents, productId }: { priceInCents: number; productId: st
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const couponFromParams = searchParams.get('coupon') || '';
+  const invalidCoupon = discountCode === null && couponFromParams !== null;
 
   // state
   const [email, setEmail] = useState<string>('');
@@ -113,11 +126,11 @@ function Form({ priceInCents, productId }: { priceInCents: number; productId: st
     setEmail(e.value.email);
   }
 
-  const handleCoupon = () => {
+  function handleCoupon() {
     const params = new URLSearchParams(searchParams);
     params.set('coupon', discountCodeRef.current?.value ?? '');
     router.push(`${pathname}?${params.toString()}`);
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -125,6 +138,7 @@ function Form({ priceInCents, productId }: { priceInCents: number; productId: st
         <CardHeader>
           <CardTitle>Checkout</CardTitle>
           {errorMessage && <CardDescription className='text-destructive'>{errorMessage}</CardDescription>}
+          {invalidCoupon && <div className='text-destructive'>Invalid coupon code</div>}
         </CardHeader>
 
         {/* Stripe Payment */}
@@ -143,9 +157,14 @@ function Form({ priceInCents, productId }: { priceInCents: number; productId: st
                 type='text'
                 name='discountCode'
                 className='w-full max-w-xs'
+                defaultValue={couponFromParams}
                 ref={discountCodeRef}
               />
               <Button onClick={handleCoupon}>Apply</Button>
+
+              {discountCode && (
+                <div className='text-sm text-muted-foreground'>{formatDiscountType(discountCode)} discount applied</div>
+              )}
             </div>
           </div>
         </CardContent>
