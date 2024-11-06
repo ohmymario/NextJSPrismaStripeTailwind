@@ -80,7 +80,7 @@ function Form({ priceInCents, productId, discountCode }: FormProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const couponFromParams = searchParams.get('coupon') || '';
+  const couponFromParams = searchParams.get('coupon');
   const invalidCoupon = discountCode === null && couponFromParams !== null;
 
   // state
@@ -137,8 +137,10 @@ function Form({ priceInCents, productId, discountCode }: FormProps) {
       <Card>
         <CardHeader>
           <CardTitle>Checkout</CardTitle>
-          {errorMessage && <CardDescription className='text-destructive'>{errorMessage}</CardDescription>}
-          {invalidCoupon && <div className='text-destructive'>Invalid coupon code</div>}
+          <CardDescription className='text-destructive'>
+            {errorMessage && <div>{errorMessage}</div>}
+            {invalidCoupon && <div>Invalid coupon code</div>}
+          </CardDescription>
         </CardHeader>
 
         {/* Stripe Payment */}
@@ -147,8 +149,8 @@ function Form({ priceInCents, productId, discountCode }: FormProps) {
           <div className='mt-4'>
             <LinkAuthenticationElement onChange={handleEmail} />
           </div>
-          {/* Coupon Code */}
 
+          {/* Coupon Code */}
           <div className='space-y-2 mt-4'>
             <Label htmlFor='discountCode'>Coupon</Label>
             <div className='flex items-center gap-4 '>
@@ -157,7 +159,7 @@ function Form({ priceInCents, productId, discountCode }: FormProps) {
                 type='text'
                 name='discountCode'
                 className='w-full max-w-xs'
-                defaultValue={couponFromParams}
+                defaultValue={couponFromParams ?? ''}
                 ref={discountCodeRef}
               />
               <Button onClick={handleCoupon}>Apply</Button>
