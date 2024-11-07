@@ -1,5 +1,5 @@
 import db from "@/db/db";
-import { Prisma } from "@prisma/client";
+import { DiscountCode, Prisma } from "@prisma/client";
 
 export function buildActiveDiscountWhere(productId: string) {
   return {
@@ -48,4 +48,41 @@ export async function getDiscountCode(coupon: string, productId: string) {
   });
 
   return discountCode;
+}
+
+/**
+ * Calculates the discounted price for a product
+ * @param priceInCents - The price of the product in cents
+ * @param discountCode - The discount code to apply
+ * @returns The discounted price in cents
+ */
+
+export function getDiscountedAmount(priceInCents: number, discountCode: Pick<DiscountCode, 'discountAmount' | 'discountType'>) {
+  const { discountAmount, discountType } = discountCode;
+
+  function percentageDiscount() {
+    return Math.max(
+      1,
+      Math.ceil(
+        priceInCents - (priceInCents * discountAmount) / 100
+      )
+    )
+  }
+
+  function fixedDiscount() {
+    return Math.max(
+      1,
+      Math.ceil(priceInCents - discountAmount * 100)
+    )
+  }
+
+  if (discountType === 'PERCENTAGE') {
+    return percentageDiscount();
+  }
+
+  if (discountType === 'FIXED') {
+    return fixedDiscount();
+  }
+
+  throw new Error(`Invalid discount type ${discountType}`);
 }
