@@ -1,15 +1,11 @@
 'use client';
 
-// React
-import { FormEvent, useRef, useState } from 'react';
-
 // Nextjs
 import Image from 'next/image';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 // stripe
-import { loadStripe, StripeLinkAuthenticationElementChangeEvent } from '@stripe/stripe-js';
-import { Elements, LinkAuthenticationElement, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 // prisma
 import { DiscountCode } from '@prisma/client';
@@ -18,8 +14,8 @@ import { DiscountCode } from '@prisma/client';
 import Form from './Form';
 
 // utils
-import { userOrderExists } from '@/app/actions/orders';
-import { formatCurrency, formatDiscountType } from '@/lib/formatters';
+import { formatCurrency } from '@/lib/formatters';
+import { getDiscountedAmount } from '@/lib/discountCodeHelpers';
 
 interface Product {
   id: string;
