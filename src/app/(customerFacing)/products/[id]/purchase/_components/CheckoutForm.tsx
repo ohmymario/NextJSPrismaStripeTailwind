@@ -31,12 +31,6 @@ interface CheckoutFormProps {
   discountCode?: Pick<DiscountCode, 'id' | 'discountAmount' | 'discountType'> | null;
 }
 
-interface FormProps {
-  priceInCents: number;
-  productId: string;
-  discountCode?: Pick<DiscountCode, 'id' | 'discountAmount' | 'discountType'> | null;
-}
-
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string);
 
 export default function CheckoutForm({ product, clientSecret, discountCode }: CheckoutFormProps) {
