@@ -27,13 +27,12 @@ interface Product {
 
 interface CheckoutFormProps {
   product: Product;
-  clientSecret: string;
   discountCode?: Pick<DiscountCode, 'id' | 'discountAmount' | 'discountType'> | null;
 }
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string);
 
-export default function CheckoutForm({ product, clientSecret, discountCode }: CheckoutFormProps) {
+export default function CheckoutForm({ product, discountCode }: CheckoutFormProps) {
   const adjustedPriceInCents = !discountCode
     ? product.priceInCents
     : getDiscountedAmount(product.priceInCents, discountCode);

@@ -22,6 +22,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 // utils
 import { userOrderExists } from '@/app/actions/orders';
 import { formatCurrency, formatDiscountType } from '@/lib/formatters';
+import { createPaymentIntent } from '@/actions/orders';
 
 interface FormProps {
   priceInCents: number;
@@ -56,17 +57,27 @@ export default function Form({ priceInCents, productId, discountCode }: FormProp
 
     setIsLoading(true);
 
-    const orderExists = await userOrderExists(email, productId);
-
-    if (orderExists) {
-      setErrorMessage(`You've already purchased this product. Try downloading it from the My Orders page.`);
+    const formSubmit = await elements.submit();
+    if (formSubmit.error) {
+      setErrorMessage(formSubmit.error.message);
       setIsLoading(false);
       return;
     }
 
+    const paymentIntent = await createPaymentIntent(email, productId, discountCode?.id);
+
+    if (paymentIntent.error) {
+      setErrorMessage(paymentIntent.error);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!paymentIntent.clientSecret) return;
+
     stripe
       .confirmPayment({
         elements,
+        clientSecret: paymentIntent.clientSecret,
         confirmParams: {
           return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/stripe/purchase-success`,
         },

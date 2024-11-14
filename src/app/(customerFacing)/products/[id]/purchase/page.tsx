@@ -18,17 +18,5 @@ export default async function PurchasePage({ params: { id }, searchParams: { cou
 
   const discountCode = coupon ? await getDiscountCode(coupon, product.id) : null;
 
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: product.priceInCents,
-    currency: 'USD',
-    metadata: { productId: product.id },
-  });
-
-  if (paymentIntent.client_secret === null) {
-    throw new Error('Stripe failed to create payment intent.');
-  }
-
-  const { client_secret } = paymentIntent;
-
-  return <CheckoutForm product={product} clientSecret={client_secret} discountCode={discountCode} />;
+  return <CheckoutForm product={product} discountCode={discountCode} />;
 }
