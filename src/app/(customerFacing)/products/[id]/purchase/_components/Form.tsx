@@ -55,44 +55,39 @@ export default function Form({ priceInCents, productId, discountCode }: FormProp
     e.preventDefault();
     if (!stripe || !elements || !email) return;
 
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const formSubmit = await elements.submit();
-    if (formSubmit.error) {
-      setErrorMessage(formSubmit.error.message);
-      setIsLoading(false);
-      return;
-    }
+      // submit form and throw error if any
+      const formSubmit = await elements.submit();
+      if (formSubmit.error) throw new Error(formSubmit.error.message);
 
-    const paymentIntent = await createPaymentIntent(email, productId, discountCode?.id);
+      // create payment intent and throw error if any
+      const paymentIntent = await createPaymentIntent(email, productId, discountCode?.id);
+      if (paymentIntent.error) throw new Error(paymentIntent.error);
+      if (!paymentIntent.clientSecret) throw new Error('Unknown Stripe error');
 
-    if (paymentIntent.error) {
-      setErrorMessage(paymentIntent.error);
-      setIsLoading(false);
-      return;
-    }
-
-    if (!paymentIntent.clientSecret) return;
-
-    stripe
-      .confirmPayment({
+      const { error: paymentError } = await stripe.confirmPayment({
         elements,
         clientSecret: paymentIntent.clientSecret,
         confirmParams: {
           return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/stripe/purchase-success`,
         },
-      })
-      .then((res) => {
-        const { error } = res;
-        if (error.type === 'card_error' || error.type === 'validation_error') {
-          setErrorMessage(error.message);
-        } else {
-          setErrorMessage(`An unexpected error occurred. Please try again.`);
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
       });
+
+      if (paymentError) {
+        if (paymentError.type === 'card_error' || paymentError.type === 'validation_error') {
+          throw new Error(paymentError.message);
+        } else {
+          throw new Error('An unexpected error occurred. Please try again.');
+        }
+      }
+    } catch (error) {
+      console.error('Payment processing error:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function handleEmail(e: StripeLinkAuthenticationElementChangeEvent) {
