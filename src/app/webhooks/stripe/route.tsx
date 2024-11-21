@@ -51,18 +51,27 @@ export async function POST(req: NextRequest) {
     // Upsert user and their order
     // If user exists: adds new order to their history
     // If user doesn't exist: creates new user with this order
+    const {
+      orders: [order],
+    } = await db.user.upsert({
       where: { email },
-      // create or update user
       create: userFields,
       update: userFields,
-      // return the orders
       select: {
         orders: {
           orderBy: { createdAt: 'desc' },
-          take: 1,
+          take: 1, // Get only the most recent order
         },
       },
     });
+
+    // if there is a discount code, update the uses
+    if (discountCodeId) {
+      await db.discountCode.update({
+        where: { id: discountCodeId },
+        data: { uses: { increment: 1 } },
+      });
+    }
 
     // Create a time-limited download verification token
     const downloadVerification = await db.downloadVerifications.create({
