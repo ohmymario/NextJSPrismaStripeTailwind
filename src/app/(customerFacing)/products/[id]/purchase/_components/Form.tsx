@@ -20,7 +20,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 // utils
-import { userOrderExists } from '@/app/actions/orders';
 import { formatCurrency, formatDiscountType } from '@/lib/formatters';
 import { createPaymentIntent } from '@/actions/orders';
 
@@ -94,7 +93,9 @@ export default function Form({ priceInCents, productId, discountCode }: FormProp
     setEmail(e.value.email);
   }
 
-  function handleCoupon() {
+  function handleCoupon(e: FormEvent) {
+    e.preventDefault();
+
     const params = new URLSearchParams(searchParams);
     params.set('coupon', discountCodeRef.current?.value ?? '');
     router.push(`${pathname}?${params.toString()}`);
@@ -114,9 +115,7 @@ export default function Form({ priceInCents, productId, discountCode }: FormProp
         {/* Stripe Payment */}
         <CardContent>
           <PaymentElement />
-          <div className='mt-4'>
-            <LinkAuthenticationElement onChange={handleEmail} />
-          </div>
+          <LinkAuthenticationElement onChange={handleEmail} className='mt-4' />
 
           {/* Coupon Code */}
           <div className='space-y-2 mt-4'>
