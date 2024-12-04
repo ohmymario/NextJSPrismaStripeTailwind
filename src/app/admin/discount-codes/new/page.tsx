@@ -13,8 +13,6 @@ export default async function NewDiscountCodePage(props: NewDiscountCodePageProp
     orderBy: { name: 'asc' },
   });
 
-  console.log(products);
-
   return (
     <>
       <PageHeader>Add DiscountCode</PageHeader>
