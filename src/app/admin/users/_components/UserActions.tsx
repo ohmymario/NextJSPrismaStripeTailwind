@@ -1,9 +1,14 @@
 'use client';
 
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+// react and next
 import { useTransition } from 'react';
-import { deleteUser } from '@/app/admin/_actions/users';
 import { useRouter } from 'next/navigation';
+
+// shadcn
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+
+// actions
+import { deleteUser } from '@/actions/admin/users';
 
 export function DeleteDropDownItem({ id }: { id: string }) {
   const [isPending, startTransition] = useTransition();
