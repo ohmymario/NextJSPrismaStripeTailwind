@@ -16,14 +16,14 @@ import { ProductCard } from '@/components/ProductCard';
 import { Eye } from 'lucide-react';
 
 interface PreviewModalProps {
-  product: {
+  product: Partial<{
     id: string;
     name: string;
     description: string;
     priceInCents: number;
     imagePath: string;
     isAvailableForPurchase: boolean;
-  };
+  }>;
 }
 
 const PreviewModal = ({ product }: PreviewModalProps) => {
