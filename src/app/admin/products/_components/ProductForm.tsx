@@ -123,6 +123,7 @@ export default function ProductForm({ product }: ProductFormProps) {
               name,
               description,
               priceInCents,
+              filePath: file ? file.name : product?.filePath || '',
               imagePath: image ? URL.createObjectURL(image) : product?.imagePath || '',
               isAvailableForPurchase: product?.isAvailableForPurchase || false,
             }}
