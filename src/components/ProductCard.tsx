@@ -6,7 +6,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Image from 'next/image';
 import { Skeleton } from './ui/skeleton';
 
-export function ProductCard({ product }: { product: Product }) {
+interface ProductCardProps {
+  product: Product;
+}
+
+export function ProductCard({ product }: ProductCardProps) {
   const { name, description, priceInCents, id, imagePath } = product;
   const formattedCurrency = formatCurrency(priceInCents / 100);
 
@@ -67,7 +71,12 @@ export function ProductCardSkeleton() {
   );
 }
 
-// component that takes in number of ProductCardSkeleton to render
+/**
+ * Generates multiple ProductCardSkeleton components
+ * @param {number} props.count - Number of skeleton cards to render
+ * @returns {JSX.Element} Multiple ProductCardSkeleton components wrapped in a fragment
+ */
+
 export function ProductSkeletonGen({ count }: { count: number }) {
   return (
     <>
