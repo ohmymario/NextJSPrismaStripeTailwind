@@ -10,10 +10,11 @@ import {
 } from '@/components/ui/dialog';
 
 // components
-import { ProductCard } from '@/components/ProductCard';
+import PreviewProductCard from './PreviewProductCard';
 
 // icons
 import { Eye } from 'lucide-react';
+import Image from 'next/image';
 
 interface PreviewModalProps {
   product: Partial<{
@@ -21,6 +22,7 @@ interface PreviewModalProps {
     name: string;
     description: string;
     priceInCents: number;
+    filePath: string;
     imagePath: string;
     isAvailableForPurchase: boolean;
   }>;
@@ -42,17 +44,7 @@ const PreviewModal = ({ product }: PreviewModalProps) => {
         <DialogHeader>
           <DialogTitle>Product Preview</DialogTitle>
         </DialogHeader>
-        {/* TODO: Add ProductCard component w/ preview prop */}
-        {/* <ProductCard product={product} preview /> */}
-
-        {/* TEMPORARY */}
-        <DialogDescription>
-          <p>{product.name}</p>
-          <p>{product.description}</p>
-          <p>${product.priceInCents}</p>
-          <p>{product.imagePath}</p>
-          <p>{product.isAvailableForPurchase}</p>
-        </DialogDescription>
+        <PreviewProductCard product={product} />
       </DialogContent>
     </Dialog>
   );
