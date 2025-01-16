@@ -99,6 +99,7 @@ export default function ProductForm({ product }: ProductFormProps) {
             type='file'
             id='image'
             name='image'
+            accept='image/apng, image/avif, image/gif, image/jpeg, image/png, image/svg+xml, image/webp'
             required={product === null}
             onChange={(e) => setImage(e.target.files ? e.target.files[0] : null)}
           />
