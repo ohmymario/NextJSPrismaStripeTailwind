@@ -1,8 +1,6 @@
-// nextjs
+// nextjs and prisma
 import Link from 'next/link';
 import Image from 'next/image';
-
-// prisma
 import { Product } from '@prisma/client';
 
 // components
@@ -11,15 +9,41 @@ import { formatCurrency } from '@/lib/formatters';
 // shadcn
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Terminal, TriangleAlert } from 'lucide-react';
 
 interface PreviewProductCardProps {
   product: Partial<Product>;
 }
 
 export default function PreviewProductCard({ product }: PreviewProductCardProps) {
-  const { name, description, priceInCents, id, imagePath } = product;
+  const { name, description, priceInCents, id, imagePath, filePath } = product;
+
+  // Check for missing required fields
+  const missingFields = [
+    !name && 'Name',
+    !priceInCents && 'Price',
+    !description && 'Description',
+    !filePath && 'File',
+    !imagePath && 'Image',
+  ].filter(Boolean);
+
   return (
-    <div className='flex flex-col overflow-hidden'>
+    <div className='flex flex-col gap-4 overflow-hidden'>
+      {missingFields.length > 0 && (
+        <Alert variant='destructive' className='flex gap-4'>
+          <div className='flex items-center'>
+            <TriangleAlert />
+          </div>
+          <div>
+            <AlertTitle>Missing Required Fields</AlertTitle>
+            <AlertDescription>
+              Please provide the following required fields: {missingFields.join(', ')}
+            </AlertDescription>
+          </div>
+        </Alert>
+      )}
+
       <Card>
         {/* Image */}
         <div className='relative w-full h-auto aspect-video '>
@@ -46,4 +70,19 @@ export default function PreviewProductCard({ product }: PreviewProductCardProps)
       </Card>
     </div>
   );
+}
+
+// Heads up youre missing
+// price;
+// name;
+// description;
+// file;
+// image;
+
+{
+  /* <Alert>
+  <Terminal className='h-4 w-4' />
+  <AlertTitle>Heads up!</AlertTitle>
+  <AlertDescription>You can add components and dependencies to your app using the cli.</AlertDescription>
+</Alert>; */
 }
