@@ -25,6 +25,8 @@ interface PreviewModalProps {
     filePath: string;
     imagePath: string;
     isAvailableForPurchase: boolean;
+    createdAt: Date;
+    updatedAt: Date;
   }>;
 }
 

@@ -127,6 +127,8 @@ export default function ProductForm({ product }: ProductFormProps) {
               filePath: file ? file.name : product?.filePath || '',
               imagePath: image ? URL.createObjectURL(image) : product?.imagePath || '',
               isAvailableForPurchase: product?.isAvailableForPurchase || false,
+              createdAt: product?.createdAt,
+              updatedAt: product?.updatedAt,
             }}
           />
           <SubmitButton />
