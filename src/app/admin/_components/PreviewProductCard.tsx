@@ -29,7 +29,7 @@ export default function PreviewProductCard({ product }: PreviewProductCardProps)
   ].filter(Boolean);
 
   return (
-    <div className='flex flex-col gap-4 overflow-hidden'>
+    <div className='flex flex-col gap-4'>
       {missingFields.length > 0 && (
         <Alert variant='destructive' className='flex gap-4'>
           <div className='flex items-center'>

@@ -1,33 +1,18 @@
+// prisma
+import { Product } from '@prisma/client';
+
 // shadcn
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 // components
 import PreviewProductCard from './PreviewProductCard';
 
 // icons
 import { Eye } from 'lucide-react';
-import Image from 'next/image';
 
 interface PreviewModalProps {
-  product: Partial<{
-    id: string;
-    name: string;
-    description: string;
-    priceInCents: number;
-    filePath: string;
-    imagePath: string;
-    isAvailableForPurchase: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  }>;
+  product: Partial<Product>;
 }
 
 const PreviewModal = ({ product }: PreviewModalProps) => {
@@ -42,7 +27,7 @@ const PreviewModal = ({ product }: PreviewModalProps) => {
       </DialogTrigger>
 
       {/* ACTUAL MODAL CONTENT */}
-      <DialogContent className='max-w-2xl'>
+      <DialogContent className='max-w-2xl overflow-y-scroll max-h-screen'>
         <DialogHeader>
           <DialogTitle>Product Preview</DialogTitle>
         </DialogHeader>
