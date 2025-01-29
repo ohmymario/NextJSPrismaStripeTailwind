@@ -110,18 +110,3 @@ export default function PreviewProductCard({ product }: PreviewProductCardProps)
     </div>
   );
 }
-
-// Heads up youre missing
-// price;
-// name;
-// description;
-// file;
-// image;
-
-{
-  /* <Alert>
-  <Terminal className='h-4 w-4' />
-  <AlertTitle>Heads up!</AlertTitle>
-  <AlertDescription>You can add components and dependencies to your app using the cli.</AlertDescription>
-</Alert>; */
-}
