@@ -120,7 +120,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         <div className='flex gap-4'>
           <PreviewModal
             product={{
-              id: product?.id || '',
+              id: product?.id,
               name,
               description,
               priceInCents,
