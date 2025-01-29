@@ -20,9 +20,6 @@ export default function PreviewProductCard({ product }: PreviewProductCardProps)
   const { name, description, priceInCents, id, imagePath, filePath, isAvailableForPurchase, createdAt, updatedAt } =
     product;
 
-  console.log(`createdAt ${createdAt}`);
-
-  // Check for missing required fields
   const missingFields = [
     !name && 'Name',
     !priceInCents && 'Price',
