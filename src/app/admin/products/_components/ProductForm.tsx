@@ -131,6 +131,11 @@ export default function ProductForm({ product }: ProductFormProps) {
               updatedAt: product?.updatedAt,
             }}
           />
+
+          {/* <Button variant='outline'> */}
+          {/* <Eye className='h-4 w-4' /> */}
+          {/* Admin Details */}
+          {/* </Button> */}
           <SubmitButton />
         </div>
       </form>

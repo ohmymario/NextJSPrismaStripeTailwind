@@ -39,7 +39,7 @@ const PreviewModal = ({ product }: PreviewModalProps) => {
 
         <PreviewProductCard product={product} />
 
-        <Collapsible open={isOpen} onOpenChange={setIsOpen} className='mt-4'>
+        {/* <Collapsible open={isOpen} onOpenChange={setIsOpen} className='mt-4'>
           <CollapsibleTrigger asChild>
             <Button variant='outline' className='w-full flex items-center justify-between'>
               Admin Details
@@ -49,7 +49,7 @@ const PreviewModal = ({ product }: PreviewModalProps) => {
           <CollapsibleContent className='mt-2'>
             <PreviewAdminDetails product={product} />
           </CollapsibleContent>
-        </Collapsible>
+        </Collapsible> */}
       </DialogContent>
     </Dialog>
   );
