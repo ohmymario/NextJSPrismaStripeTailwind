@@ -10,7 +10,7 @@ import { formatCurrency } from '@/lib/formatters';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, TriangleAlert } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
 
 interface PreviewProductCardProps {
   product: Partial<Product>;

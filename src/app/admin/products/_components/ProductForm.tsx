@@ -132,10 +132,6 @@ export default function ProductForm({ product }: ProductFormProps) {
             }}
           />
 
-          {/* <Button variant='outline'> */}
-          {/* <Eye className='h-4 w-4' /> */}
-          {/* Admin Details */}
-          {/* </Button> */}
           <SubmitButton />
         </div>
       </form>

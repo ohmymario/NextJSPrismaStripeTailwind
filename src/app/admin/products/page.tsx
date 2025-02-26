@@ -26,6 +26,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible';
+import PreviewAdminDetails from '../_components/PreviewAdminDetails';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { DialogTrigger } from '@/components/ui/dialog';
 
 interface ProductsProps {}
 
@@ -97,29 +101,34 @@ async function ProductsTable() {
             <TableCell>{formatCurrency(product.priceInCents / 100)}</TableCell>
             <TableCell>{formatNumber(product._count.orders)}</TableCell>
             <TableCell>
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <MoreVertical />
-                  <span className='sr-only'>Actions</span>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem asChild>
-                    <a href={`/admin/products/${product.id}/download`}>Download</a>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <a href={`/admin/products/${product.id}/edit`}>Edit</a>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <a href='#'>Additional Details</a>
-                  </DropdownMenuItem>
+              <Dialog>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <MoreVertical />
+                    <span className='sr-only'>Actions</span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem asChild>
+                      <a href={`/admin/products/${product.id}/download`}>Download</a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <a href={`/admin/products/${product.id}/edit`}>Edit</a>
+                    </DropdownMenuItem>
 
-                  <ActiveToggleDropdownItem id={product.id} isAvailableForPurchase={product.isAvailableForPurchase} />
+                    <ActiveToggleDropdownItem id={product.id} isAvailableForPurchase={product.isAvailableForPurchase} />
 
-                  <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <DialogTrigger>Additional Details</DialogTrigger>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DeleteDropdownItem id={product.id} disabled={product._count.orders > 0} />
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-                  <DeleteDropdownItem id={product.id} disabled={product._count.orders > 0} />
-                </DropdownMenuContent>
-              </DropdownMenu>
+                <DialogContent>
+                  <PreviewAdminDetails product={product} />
+                </DialogContent>
+              </Dialog>
             </TableCell>
           </TableRow>
         ))}
